@@ -1,6 +1,6 @@
 name: flutter_markup_text
 description: This powerful Flutter package empowers developers to annotate their text with markup tags, allowing for the extraction and association of valuable information.
-version: 0.0.1
+version: 0.0.1+1
 homepage: https://github.com/real-ali/markup_text
 
 environment:
