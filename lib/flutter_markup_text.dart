@@ -1,100 +1,105 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-/// Mark Enum
+/// Represents a clickable text mark.
 class Mark {
-  /// markup text
+  /// The keyword or phrase to be recognized inside @{}
   final String mark;
 
-  /// markup text action
+  /// The action to be triggered on click.
   final void Function() onClick;
+
   Mark(this.mark, this.onClick);
 }
 
-/// # Markup Text
-///
-/// ### Introduction:
-///
-/// MarkupText is a powerful tool for applying linkability to texts in your Flutter applications. With this package, users can easily designate their desired texts as linkable by using the @{} tag, and clicking on them will redirect them to the intended destination.
-///
-/// ![image](https://github.com/real-ali/markup_text/blob/main/image.png)
-///
-/// ### Usage Guide:
-/// 1.  Installation and Import: Begin by adding the MarkupText package to your project's pubspec.yaml file and then click on the Packages Get button to install the package in your project.
-///
-/// 2.  Put the content you want to be branded to create an action inside @{...} tag.
-///
-/// ```dart
-/// String text = "This is a sample @{text}. Place the @{text} you want to link inside @{}";
-/// ```
-/// 3.  Adding Actions to Links: To perform actions such as opening a new page or executing specific operations when a link is clicked, as follows.
-/// ```dart
-/// MarkupText(
-///       text: text,
-///       marks: [
-///         Mark("text", () {
-///           print("Some info for Example");
-///         }),
-///       ],
-/// );
-/// ```
-/// ‍‍
-///
-/// 4.  You can apply your desired styles to the texts.
-/// ```dart
-/// textStyle: const TextStyle(
-///         fontWeight: FontWeight.bold,
-///         color: Colors.blue,
-///       ),
-/// ```
-/// ```dart
-/// marksStyle: const TextStyle(
-///         fontWeight: FontWeight.bold,
-///         color: Colors.blue,
-///       ),
-/// ```
-///
-///
-///
-/// With the MarkupText package, you can effortlessly add linkability to your texts, providing an interactive experience for your users.
-///
-///
-/// ## Additional information
-///
-/// A Package Developed by Ali Hosseini
-///
-/// Please, report the bugs through the Github repository:
-/// https://github.com/real-ali/markup_text/issues
+/// A custom text widget that makes parts of the text clickable using @{...} syntax.
 class MarkupText extends StatelessWidget {
+  /// Full text with markable sections like: "Click @{here} for more."
   final String text;
+
+  /// List of marks and their associated actions.
   final List<Mark> marks;
+
+  /// Style for the non-clickable text.
   final TextStyle? textStyle;
+
+  /// Style for clickable marked text.
   final TextStyle? marksStyle;
+
+  /// Text alignment inside the RichText widget.
+  final TextAlign textAlign;
+
+  /// Max number of lines to display.
+  final int? maxLines;
+
+  /// Text overflow behavior (e.g. ellipsis).
+  final TextOverflow? overflow;
+
+  /// Defines the reading direction for the text (e.g., left-to-right or right-to-left).
+  /// Useful for supporting internationalization and right-to-left languages.
+  final TextDirection? textDirection;
+
   const MarkupText({
     super.key,
     required this.text,
     this.marks = const [],
     this.textStyle,
     this.marksStyle,
+    this.textAlign = TextAlign.start,
+    this.maxLines,
+    this.overflow,
+    this.textDirection,
   });
 
   @override
   Widget build(BuildContext context) {
-    final splitText = text.split(RegExp(r'[@{:}]'));
-    List<InlineSpan> spanText = splitText.map((e) {
-      for (var element in marks) {
-        if (e == element.mark) {
-          return TextSpan(
-              text: e,
-              style: marksStyle ?? const TextStyle(color: Colors.blue),
-              recognizer: TapGestureRecognizer()..onTap = element.onClick);
-        }
+    final spans = <InlineSpan>[];
+    final regex = RegExp(r'@\{(.*?)\}');
+    int currentIndex = 0;
+
+    final matches = regex.allMatches(text);
+    for (final match in matches) {
+      final beforeText = text.substring(currentIndex, match.start);
+      final markedText = match.group(1);
+
+      if (beforeText.isNotEmpty) {
+        spans.add(TextSpan(
+          text: beforeText,
+          style: textStyle ?? Theme.of(context).textTheme.bodyMedium,
+        ));
       }
-      return TextSpan(
-          text: e, style: textStyle ?? Theme.of(context).textTheme.titleSmall);
-    }).toList();
+
+      final mark = marks.firstWhere(
+        (m) => m.mark == markedText,
+        orElse: () => Mark(markedText ?? '', () {}),
+      );
+
+      spans.add(TextSpan(
+        text: markedText,
+        style: marksStyle ??
+            TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+        recognizer: TapGestureRecognizer()..onTap = mark.onClick,
+      ));
+
+      currentIndex = match.end;
+    }
+
+    if (currentIndex < text.length) {
+      spans.add(TextSpan(
+        text: text.substring(currentIndex),
+        style: textStyle ?? Theme.of(context).textTheme.bodyMedium,
+      ));
+    }
+
     return RichText(
-      text: TextSpan(children: spanText),
+      textAlign: textAlign,
+      maxLines: maxLines,
+      overflow: overflow ?? TextOverflow.clip,
+      textDirection: textDirection,
+      text: TextSpan(children: spans),
     );
   }
 }

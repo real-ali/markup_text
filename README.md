@@ -1,54 +1,98 @@
-# Markup Text
+# 📌 MarkupText Widget Documentation
 
-### Introduction:
+## 🚀 Introduction
 
-MarkupText is a powerful tool for applying linkability to texts in your Flutter applications. With this package, users can easily designate their desired texts as linkable by using the @{} tag, and clicking on them will redirect them to the intended destination.
+**MarkupText** is a lightweight yet powerful Flutter widget that adds tappable, styled links within your text using simple `@{...}` markup syntax.
+It supports rich interactions, custom styles, and is fully localizable and layout-friendly for both LTR and RTL languages.
 
-![image](https://github.com/real-ali/markup_text/blob/main/image.png)
+<img src="assets/image.png" alt="MarkupText Demo" width="100%" />
 
-### Usage Guide:
-1.  Installation and Import: Begin by adding the MarkupText package to your project's pubspec.yaml file and then click on the Packages Get button to install the package in your project.
+---
 
-2.  Put the content you want to be branded to create an action inside @{...} tag.
+## 🧑‍💻 Usage Guide
+
+### 1. 📦 Installation
+
+Add the widget file to your Flutter project or use it as a package (coming soon).
+
+### 2. 📝 Markup Your Text
+
+Wrap clickable words or phrases with `@{...}` to define links:
 
 ```dart
-String text = "This is a sample @{text}. Place the @{text} you want to link inside @{}";
+String text = "By continuing, you agree to our @{Terms of Service} and @{Privacy Policy}.";
 ```
-3.  Adding Actions to Links: To perform actions such as opening a new page or executing specific operations when a link is clicked, as follows.
+
+### 3. 🧠 Assign Actions to Marked Text
+
+Pass a list of `Mark` objects to define click behavior:
+
 ```dart
 MarkupText(
-      text: text,
-      marks: [
-        Mark("text", () {
-          print("Some info for Example");
-        }),
-      ],
+  text: text,
+  marks: [
+    Mark("Terms of Service", () => print("Terms tapped")),
+    Mark("Privacy Policy", () => print("Policy tapped")),
+  ],
 );
 ```
-‍‍
 
-4.  You can apply your desired styles to the texts.
+### 4. 🎨 Customize Appearance
+
+You can style both normal and clickable text separately:
+
 ```dart
-textStyle: const TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.blue,
-      ),
+textStyle: TextStyle(
+  fontSize: 14,
+  color: Colors.grey[700],
+),
+marksStyle: TextStyle(
+  fontSize: 14,
+  fontWeight: FontWeight.bold,
+  color: Colors.blue,
+),
 ```
+
+### 5. ⚙️ Control Layout
+
+Support for layout parameters:
+
 ```dart
-marksStyle: const TextStyle(
-        fontWeight: FontWeight.bold,
-        color: Colors.blue,
-      ),
+textAlign: TextAlign.center,
+overflow: TextOverflow.ellipsis,
+maxLines: 2,
+textDirection: TextDirection.rtl,
 ```
 
+---
 
+## 📚 Full Example
 
-With the MarkupText package, you can effortlessly add linkability to your texts, providing an interactive experience for your users.
+```dart
+MarkupText(
+  text: "Read our @{Terms} and @{Privacy Policy}.",
+  marks: [
+    Mark("Terms", () => print("Terms clicked")),
+    Mark("Privacy Policy", () => print("Privacy clicked")),
+  ],
+  textStyle: TextStyle(fontSize: 13),
+  marksStyle: TextStyle(
+    fontWeight: FontWeight.w600,
+    color: Colors.teal,
+    decoration: TextDecoration.underline,
+  ),
+  textAlign: TextAlign.start,
+  overflow: TextOverflow.visible,
+  maxLines: 3,
+  textDirection: TextDirection.ltr,
+)
+```
 
+---
 
-## Additional information
+## 🔧 Additional Info
 
-A Package Developed by Ali Hosseini
+- 💡 Developed by: **Ali Hosseini**
+- 🐛 [Report issues on GitHub](https://github.com/real-ali/markup_text/issues)
 
-Please, report the bugs through the Github repository:
-https://github.com/real-ali/markup_text/issues
+Effortlessly add interactivity and visual appeal to inline text. Perfect for terms, policies, and onboarding flows!
